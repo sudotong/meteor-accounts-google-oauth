@@ -1,9 +1,13 @@
 Package.describe({
   summary: "Login service for Google accounts using native Google SDK for authorization",
-  version: "0.0.1"
+  version: "0.1.0",
+  name: "spencercarli:accounts-google-oauth",
+  git: "https://github.com/spencercarli/meteor-accounts-google-oauth"
 });
 
 Package.onUse(function(api) {
+  api.versionsFrom("METEOR@1.2");
+
   api.use(['oauth', 'oauth2'], ['server']);
   api.use(['underscore', 'random', 'service-configuration']);
   api.use('accounts-base', ['client', 'server']);
