@@ -33,7 +33,8 @@ Accounts.registerLoginHandler('google', function(serviceData) {
   serviceData = {
     accessToken: accessToken,
     expiresAt: expiresAt,
-    idToken: idToken
+    idToken: idToken,
+    scopes,
   }
 
   const fields = _.pick(identity, Google.whitelistedFields);
