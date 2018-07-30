@@ -47,3 +47,20 @@ Call the `login` method from ddp client with the following parameters:
 Where `serviceData` is the data returned by the sdk you are using for Google authentication.
 
 __Example:__ `DDP.call('login', [{ google: serviceData }])`
+
+## Usage with Full Meteor Client
+
+If you have access to a full Meteor client implementation, possibly through something like [`meteor-client-bundler`](https://github.com/Urigo/meteor-client-bundler), then you'll want your client-side call to look something like this:
+
+````javascript
+Accounts.callLoginMethod({
+  methodArguments: [{ google: user }], 
+  userCallback: error => {
+    if (error) {
+      console.debug(error)
+    }   
+  }   
+})
+````
+
+See [here](http://rurri.com/articles/Creating-a-custom-authentication-service-in-Meteor.html) for more information about this undocumented Meteor feature. The advantage is that this will set up your client-side authentication properly, so that (for example) `Meteor.user()` returns the current user correctly. Which is important if you are relying on that reactive data source to trigger other changes.
