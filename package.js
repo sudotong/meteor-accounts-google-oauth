@@ -18,7 +18,7 @@ Package.onUse(function(api) {
   api.imply('accounts-base', ['client', 'server']);
   api.use('accounts-oauth', ['client', 'server']);
 
-  api.use('google', ['server']);
+  api.use('google-auth', ['server']);
 
   api.addFiles("google.js", "server");
 });
