@@ -2,16 +2,18 @@
 // would call from a remote client like so
 // ddpClient.call("login", [{ google: { RES_FROM_GOOGLE_SIGN_IN } }])
 
-Accounts.registerLoginHandler('google', function(serviceData) {
+Accounts.registerLoginHandler('google', function (serviceData) {
+
+  // console.log('google:login:debug', serviceData);
+
   let loginRequest = serviceData['google'];
 
   if (!loginRequest) {
     return undefined;
   }
 
-  const serviceConfig = ServiceConfiguration.configurations.findOne({service: 'google'});
-  if (!serviceConfig)
-    throw new ServiceConfiguration.ConfigError();
+  const serviceConfig = ServiceConfiguration.configurations.findOne({ service: 'google' });
+  if (!serviceConfig) throw new ServiceConfiguration.ConfigError();
 
   const expiresAt = (+new Date) + (1000 * parseInt(loginRequest.accessTokenExpirationDate, 10));
   const accessToken = loginRequest.accessToken;
@@ -87,9 +89,7 @@ Accounts.registerLoginHandler('google', function(serviceData) {
 // https://developers.google.com/identity/sign-in/ios/backend-auth
 const validIdToken = (idToken, config) => {
   try {
-    let res = HTTP.get(
-      "https://www.googleapis.com/oauth2/v3/tokeninfo",
-      {params: {id_token: idToken}});
+    let res = HTTP.get("https://www.googleapis.com/oauth2/v3/tokeninfo", { params: { id_token: idToken } });
 
     if (res && res.statusCode === 200) {
       if (_.contains(config.validClientIds, res.data.aud)) {
@@ -108,23 +108,19 @@ const validIdToken = (idToken, config) => {
 
 const getIdentity = (accessToken) => {
   try {
-    return HTTP.get(
-      "https://www.googleapis.com/oauth2/v1/userinfo",
-      {params: {access_token: accessToken}}).data;
+    return HTTP.get("https://www.googleapis.com/oauth2/v1/userinfo", { params: { access_token: accessToken } }).data;
   } catch (err) {
     throw _.extend(new Error("Failed to fetch identity from Google. " + err.message),
-                   {response: err.response});
+      { response: err.response });
   }
 };
 
 const getScopes = (accessToken) => {
   try {
-    return HTTP.get(
-      "https://www.googleapis.com/oauth2/v1/tokeninfo",
-      {params: {access_token: accessToken}}).data.scope.split(' ');
+    return HTTP.get("https://www.googleapis.com/oauth2/v1/tokeninfo", { params: { access_token: accessToken } }).data.scope.split(' ');
   } catch (err) {
     throw _.extend(new Error("Failed to fetch tokeninfo from Google. " + err.message),
-                   {response: err.response});
+      { response: err.response });
   }
 };
 
@@ -132,12 +128,14 @@ const exchangeAuthCode = (authCode, config) => {
   let response;
   try {
     response = HTTP.post(
-      "https://www.googleapis.com/oauth2/v4/token", {params: {
+      "https://www.googleapis.com/oauth2/v4/token", {
+      params: {
         code: authCode,
         client_id: config.clientId,
         client_secret: OAuth.openSecret(config.secret),
         grant_type: 'authorization_code'
-      }});
+      }
+    });
   } catch (err) {
     // throw _.extend(new Error("Failed to exchange Google auth code for refresh token. " + err.message),
     //                {response: err.response});
